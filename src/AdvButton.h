@@ -2,7 +2,7 @@
 *
 * Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : ButtonManager.h
+* File     : AdvButton.h
 * Version  : 1.4
 * Released : 24/09/2016
 * Author   : Bart Meijer (brupje@gmail.com)
@@ -32,12 +32,14 @@
       #include "WProgram.h"
 #endif
 
+
 #ifndef ADVBUTTON_H
 #define ADVBUTTON_H
 
 class AdvButton;
 
 typedef void (*functiontype)(AdvButton*);
+
 
 enum buttonMode {btn_Digital, btn_Analog}; 
 
@@ -46,11 +48,13 @@ class AdvButton
 {
 
 public:
+
+
 	/*
 	This is the first constructor call, use it for keypress buttons 
 	pin        : pin number of the button
-        OnKeyPress : Function to call when the event occurs
-     	repeat     : time between the event is raised while pressing the button (optional)
+    OnKeyPress : Function to call when the event occurs
+ 	repeat     : time between the event is raised while pressing the button (optional)
 	startDelay : amount of time between the initial keypress event and when to start repeating (optional)
 	mode       : type of button, analog or digital
 	*/
@@ -59,8 +63,8 @@ public:
 	/*
 	This is the second constructor call, use it for other types of buttons
 	pin        : pin number of the button
-        OnKeyPress : Function to call when the keypress event occurs (optional)
-     	OnKeyDown  : Function to call when the keydown event occurs (optional) 
+    OnKeyPress : Function to call when the keypress event occurs (optional)
+ 	OnKeyDown  : Function to call when the keydown event occurs (optional) 
 	OnKeyUp    : Function to call when the keyup event occurs (optional) 
 	mode       : type of button, analog or digital
 	*/
@@ -70,7 +74,7 @@ public:
 	Checks the state of the button and triggers events accordingly
 	Will be called from the ButtonManager	
 	*/
-	void check();
+	virtual void check();
 
 	/* 
 	This function will set the function to call when the keypress event occurs
@@ -122,6 +126,12 @@ public:
 	Retrieve the amount of milliseconds the button was pressed,  only valid in keyevents
 	*/
 	unsigned long getPressTime(); 
+
+	/*
+	Return the button mode
+	*/
+	inline buttonMode getMode() { return mode; };
+
 private: 
 	/* private variables */
 	functiontype func_keyUp;
@@ -131,11 +141,13 @@ private:
   	uint8_t id;
 	buttonMode mode;
 	int debounceTime;
-    	unsigned long repeat;
+    unsigned long repeat;
 	unsigned long startDelay;
 	unsigned long startPress;
 	unsigned long lastChange;
 	int lastState=HIGH;
 	unsigned long prevPres;
+
+	void init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode);
 };
 #endif

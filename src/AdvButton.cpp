@@ -2,7 +2,7 @@
 *
 * Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : ButtonManager.h
+* File     : AdvButton.cpp
 * Version  : 1.4
 * Released : 24/09/2016
 * Author   : Bart Meijer (brupje@gmail.com)
@@ -21,27 +21,9 @@
 #include "AdvButton.h"
 #include "ButtonManager.h"
 
-AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long repeat, unsigned long startDelay, buttonMode mode)
-{
-	setPin(pin);
-	setRepeat(repeat);
-	setStartDelay(startDelay);
-	setOnKeyPress( (*OnKeyPress));
-	setOnKeyDown( NULL);
-	setOnKeyUp( NULL);
-	debounceTime = 100;
-	ButtonManager::instance()->addButton(this);
-	if (mode == btn_Digital){
-		pinMode(pin,INPUT);
-		digitalWrite(pin,HIGH);
-  	}
-	this->mode = mode;
-	lastChange = millis(); 
-    	lastState = HIGH;
-}
 
-AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode)
-{
+
+void AdvButton::init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode){
 	setPin(pin);
 	setRepeat(300);
 	setStartDelay(500);
@@ -58,6 +40,21 @@ AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDo
 	this->mode = mode;
 	lastChange = millis();
 	lastState = HIGH;
+}
+
+AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long repeat, unsigned long startDelay, buttonMode mode)
+{
+	init(pin,OnKeyPress,NULL,NULL,mode);
+	
+	setRepeat(repeat);
+	setStartDelay(startDelay);
+	
+
+}
+
+AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode)
+{
+	init(pin,OnKeyPress,OnKeyDown,OnKeyUp,mode);
 }
 
 void AdvButton::check()

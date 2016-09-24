@@ -2,7 +2,7 @@
 *
 * Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : ButtonManager.h
+* File     : ButtonManager.cpp
 * Version  : 1.4
 * Released : 24/09/2016
 * Author   : Bart Meijer (brupje@gmail.com)
@@ -19,12 +19,8 @@
 */
 
 #include "ButtonManager.h"
-#include <stdlib.h> 
-ButtonManager *ButtonManager::s_instance = 0;
 
-// for malloc and free
-//void* operator new(size_t size) { return malloc(size); }
-//void operator delete(void* ptr) { free(ptr); } 
+ButtonManager *ButtonManager::s_instance = 0;
 
 
 

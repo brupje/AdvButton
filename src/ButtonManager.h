@@ -30,14 +30,14 @@
 class ButtonManager
 {
 
-    	int numButtons;
+    int numButtons;
    	AdvButton* buttons[MAXBUTTONS]; 
     
-    	static ButtonManager *s_instance;
-    	ButtonManager();
+    static ButtonManager *s_instance;
+    ButtonManager();
   public:
 
-    	static ButtonManager *instance();
+    static ButtonManager *instance();
 	void checkButtons();
 	void addButton(AdvButton* but);
 	
