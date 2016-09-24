@@ -1,11 +1,11 @@
 /*
 *
-* Thanks for using this library! If you like it, please drop me a comment at bart@sbo-dewindroos.nl.
+* Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : AdvButton.h
-* Version  : 1.0
-* Released : 24/01/2010
-* Author   : Bart Meijer (bart@sbo-dewindroos.nl)
+* File     : ButtonManager.h
+* Version  : 1.4
+* Released : 24/09/2016
+* Author   : Bart Meijer (brupje@gmail.com)
 *
 * This is the Advanced Button library for the Arduino platform. It will enable you to easily 
 * react to user input using simple press-to-make buttons. Features include:
@@ -127,20 +127,15 @@ private:
 	functiontype func_keyUp;
 	functiontype func_keyDown;
 	functiontype func_keyPress;
-  uint8_t pin;
-  uint8_t id;
+  	uint8_t pin;
+  	uint8_t id;
 	buttonMode mode;
 	int debounceTime;
-  unsigned long repeat;
+    	unsigned long repeat;
 	unsigned long startDelay;
 	unsigned long startPress;
 	unsigned long lastChange;
-  int lastState=HIGH;
-  unsigned long prevPres;
+	int lastState=HIGH;
+	unsigned long prevPres;
 };
-
-
-
-
-
 #endif

@@ -1,11 +1,11 @@
 /*
 *
-* Thanks for using this library! If you like it, please drop me a comment at bart@sbo-dewindroos.nl.
+* Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : AdvButton.cpp
-* Version  : 1.0
-* Released : 24/01/2010
-* Author   : Bart Meijer (bart@sbo-dewindroos.nl)
+* File     : ButtonManager.h
+* Version  : 1.4
+* Released : 24/09/2016
+* Author   : Bart Meijer (brupje@gmail.com)
 *
 * This is the Advanced Button library for the Arduino platform. It will enable you to easily 
 * react to user input using simple press-to-make buttons. Features include:
@@ -34,10 +34,10 @@ AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long 
 	if (mode == btn_Digital){
 		pinMode(pin,INPUT);
 		digitalWrite(pin,HIGH);
-  }
+  	}
 	this->mode = mode;
 	lastChange = millis(); 
-    lastState = HIGH;
+    	lastState = HIGH;
 }
 
 AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode)
@@ -52,12 +52,12 @@ AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDo
 	debounceTime = 100;
 	ButtonManager::instance()->addButton(this);
 	if (mode == btn_Digital){
-    pinMode(pin, INPUT_PULLUP);
+		pinMode(pin, INPUT_PULLUP);
 		digitalWrite(pin,HIGH);
 	}
 	this->mode = mode;
-  lastChange = millis();
-  lastState = HIGH;
+	lastChange = millis();
+	lastState = HIGH;
 }
 
 void AdvButton::check()
@@ -84,7 +84,7 @@ void AdvButton::check()
 
 	
 	
-  if (cur == LOW)
+  	if (cur == LOW)
 	{	
 		// the button is pressed, but last time we checked, was the button still up?		
 		if (startPress ==0)
@@ -93,8 +93,8 @@ void AdvButton::check()
 			startPress = millis();
 			if (func_keyDown != NULL)
 				func_keyDown(this);
-            if (func_keyPress != NULL)
-                func_keyPress(this);
+		    if (func_keyPress != NULL)
+		        func_keyPress(this);
 		}
 		
 		/* is repeating enabled? */

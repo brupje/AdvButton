@@ -1,11 +1,11 @@
 /*
 *
-* Thanks for using this library! If you like it, please drop me a comment at bart@sbo-dewindroos.nl.
+* Thanks for using this library! If you like it, please drop me a comment at brupje@gmail.com.
 *
-* File     : ButtonManager.cpp
-* Version  : 1.0
-* Released : 24/01/2010
-* Author   : Bart Meijer (bart@sbo-dewindroos.nl)
+* File     : ButtonManager.h
+* Version  : 1.4
+* Released : 24/09/2016
+* Author   : Bart Meijer (brupje@gmail.com)
 *
 * This is the Advanced Button library for the Arduino platform. It will enable you to easily 
 * react to user input using simple press-to-make buttons. Features include:
