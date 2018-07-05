@@ -90,8 +90,9 @@ void AdvButton::check()
 			startPress = millis();
 			if (func_keyDown != NULL)
 				func_keyDown(this);
-		    if (func_keyPress != NULL)
+/*		    if (func_keyPress != NULL)
 		        func_keyPress(this);
+*/
 		}
 		
 		/* is repeating enabled? */
