@@ -33,12 +33,14 @@ void AdvButton::init(uint8_t pin,
 		buttonMode mode){
 	setPin(pin);
 	setRepeat(300);
-	setStartDelay(500);
+	setStartDelay(1000);
 	setOnKeyRepeatPress( (*OnRepeatKeyPress));
 	setOnKeyDown( (*OnKeyDown));
 	setOnKeyUp( (*OnKeyUp));
 
-	debounceTime = 100;
+	debounceTime = 50;
+	clickDelay=400;
+	longPressDelay=800;
 	ButtonManager::instance()->addButton(this);
 	if (mode == btn_Digital){
 		pinMode(pin, INPUT_PULLUP);
@@ -60,26 +62,26 @@ AdvButton::AdvButton(uint8_t pin,void (*OnRepeatKeyPress)(AdvButton*) , unsigned
 }
 
 AdvButton::AdvButton(uint8_t pin,
-		void (*OnRepeatKeyPress)(AdvButton*) =NULL,
-		void (*OnKeyDown)(AdvButton*)=NULL,
-		void (*OnKeyUp)(AdvButton*)=NULL,
-		buttonMode mode = btn_Digital)
+		void (*OnRepeatKeyPress)(AdvButton*),
+		void (*OnKeyDown)(AdvButton*),
+		void (*OnKeyUp)(AdvButton*),
+		buttonMode mode/* = btn_Digital*/)
 {
 	init(pin,OnRepeatKeyPress,OnKeyDown,OnKeyUp,NULL,NULL,mode);
 }
 
 
 AdvButton::AdvButton(uint8_t pin,
-			void (*OnKeyClick)(AdvButton*) =NULL,
-			buttonMode mode = btn_Digital)
+			void (*OnKeyClick)(AdvButton*),
+			buttonMode mode/* = btn_Digital*/)
 {
 	init(pin,NULL,NULL,NULL,OnKeyClick,NULL,mode);
 }
 
 AdvButton::AdvButton(uint8_t pin,
-		void (*OnKeyClick)(AdvButton*) =NULL,
-		void (*OnKeyLongPress)(AdvButton*) =NULL,
-		buttonMode mode = btn_Digital)
+		void (*OnKeyClick)(AdvButton*),
+		void (*OnKeyLongPress)(AdvButton*),
+		buttonMode mode/* = btn_Digital*/)
 {
 	init(pin,NULL,NULL,NULL,OnKeyClick,OnKeyLongPress,mode);
 }
@@ -140,6 +142,9 @@ void AdvButton::check()
 			else
 				prevPres = millis();
 		}
+		/* is long press enabled? */
+		if (func_keyLongPress !=NULL && millis() >= startPress+longPressDelay)
+			func_keyLongPress(this);
 	}
 	else
 	{
@@ -149,10 +154,6 @@ void AdvButton::check()
 		{
 			if (func_keyClick !=NULL && millis() <= startPress+clickDelay)
 				func_keyClick(this);
-			
-			if (func_keyLongPress !=NULL && millis() >= startPress+longPressDelay)
-				func_keyLongPress(this);
-
 
 			if (func_keyUp != NULL)
 				func_keyUp(this);	
