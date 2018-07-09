@@ -58,7 +58,9 @@ public:
 	startDelay : amount of time between the initial keypress event and when to start repeating (optional)
 	mode       : type of button, analog or digital
 	*/
-	AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long repeat = 300, unsigned long startDelay = 500, buttonMode mode = btn_Digital);
+	AdvButton(uint8_t pin,
+			void (*OnRepeatKeyPress)(AdvButton*),
+			unsigned long repeat = 300, unsigned long startDelay = 500, buttonMode mode = btn_Digital);
 
 	/*
 	This is the second constructor call, use it for other types of buttons
@@ -68,7 +70,35 @@ public:
 	OnKeyUp    : Function to call when the keyup event occurs (optional) 
 	mode       : type of button, analog or digital
 	*/
-	AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) =NULL, void (*OnKeyDown)(AdvButton*)=NULL,void (*OnKeyUp)(AdvButton*)=NULL, buttonMode mode = btn_Digital);
+	AdvButton(uint8_t pin,
+			void (*OnRepeatKeyPress)(AdvButton*) =NULL,
+			void (*OnKeyDown)(AdvButton*)=NULL,
+			void (*OnKeyUp)(AdvButton*)=NULL,
+			buttonMode mode = btn_Digital);
+
+
+	/*
+		This is the third constructor call, use it for other types of buttons
+		pin        : pin number of the button
+	    OnKeyClick : Function to call when the keyclick event occurs
+		mode       : type of button, analog or digital
+		*/
+	AdvButton(uint8_t pin,
+				void (*OnKeyClick)(AdvButton*) =NULL,
+				buttonMode mode = btn_Digital);
+
+
+	/*
+			This is the third constructor call, use it for other types of buttons
+			pin        : pin number of the button
+		    OnKeyClick : Function to call when the keyclick event occurs
+		    OnKeyLongpress : Function to call when the long press event occurs
+			mode       : type of button, analog or digital
+			*/
+	AdvButton(uint8_t pin,
+				void (*OnKeyClick)(AdvButton*) =NULL,
+				void (*OnKeyLongPress)(AdvButton*) =NULL,
+				buttonMode mode = btn_Digital);
 
 	/* 
 	Checks the state of the button and triggers events accordingly
@@ -79,7 +109,7 @@ public:
 	/* 
 	This function will set the function to call when the keypress event occurs
 	*/
-	void setOnKeyPress(void (*f)(AdvButton*));
+	void setOnKeyRepeatPress(void (*f)(AdvButton*));
 
 	/* 
 	This function will set the function to call when the keydown event occurs
@@ -91,7 +121,17 @@ public:
 	*/
 	void setOnKeyUp(void (*f)(AdvButton*));
 
+	/*
+	This function will set the function to call when the key click event occurs
+	*/
+	void setOnKeyClick(void (*f)(AdvButton*));
+
 	/* 
+	This function will set the function to call when the key longpress event occurs
+	*/
+	void setOnKeyLongpress(void (*f)(AdvButton*));
+
+	/*
 	Sets the time (milliseconds) between each repeated keypress event
 	*/
 	void setRepeat(unsigned long repeat);
@@ -136,18 +176,22 @@ private:
 	/* private variables */
 	functiontype func_keyUp;
 	functiontype func_keyDown;
-	functiontype func_keyPress;
+	functiontype func_keyRepeatPress;
+	functiontype func_keyLongPress;
+	functiontype func_keyClick;
   	uint8_t pin;
   	uint8_t id;
 	buttonMode mode;
 	int debounceTime;
     unsigned long repeat;
 	unsigned long startDelay;
+	unsigned long clickDelay;
+	unsigned long longPressDelay;
 	unsigned long startPress;
 	unsigned long lastChange;
 	int lastState=HIGH;
 	unsigned long prevPres;
 
-	void init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode);
+	void init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*),void (*OnKeyClick)(AdvButton*), void (*OnKeyLongPress)(AdvButton*), buttonMode mode);
 };
 #endif

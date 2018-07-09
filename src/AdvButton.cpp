@@ -23,15 +23,24 @@
 
 
 
-void AdvButton::init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode){
+void AdvButton::init(uint8_t pin,
+		void (*OnRepeatKeyPress)(AdvButton*),
+		void (*OnKeyDown)(AdvButton*),
+		void (*OnKeyUp)(AdvButton*),
+		void (*OnKeyClick)(AdvButton*),
+		void (*OnKeyLongPress)(AdvButton*),
+
+		buttonMode mode){
 	setPin(pin);
 	setRepeat(300);
-	setStartDelay(500);
-	setOnKeyPress( (*OnKeyPress));
+	setStartDelay(1000);
+	setOnKeyRepeatPress( (*OnRepeatKeyPress));
 	setOnKeyDown( (*OnKeyDown));
 	setOnKeyUp( (*OnKeyUp));
 
-	debounceTime = 100;
+	debounceTime = 50;
+	clickDelay=400;
+	longPressDelay=800;
 	ButtonManager::instance()->addButton(this);
 	if (mode == btn_Digital){
 		pinMode(pin, INPUT_PULLUP);
@@ -42,9 +51,9 @@ void AdvButton::init(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDo
 	lastState = HIGH;
 }
 
-AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long repeat, unsigned long startDelay, buttonMode mode)
+AdvButton::AdvButton(uint8_t pin,void (*OnRepeatKeyPress)(AdvButton*) , unsigned long repeat, unsigned long startDelay, buttonMode mode)
 {
-	init(pin,OnKeyPress,NULL,NULL,mode);
+	init(pin,OnRepeatKeyPress,NULL,NULL,NULL,NULL,mode);
 	
 	setRepeat(repeat);
 	setStartDelay(startDelay);
@@ -52,10 +61,31 @@ AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , unsigned long 
 
 }
 
-AdvButton::AdvButton(uint8_t pin,void (*OnKeyPress)(AdvButton*) , void (*OnKeyDown)(AdvButton*),void (*OnKeyUp)(AdvButton*), buttonMode mode)
+AdvButton::AdvButton(uint8_t pin,
+		void (*OnRepeatKeyPress)(AdvButton*),
+		void (*OnKeyDown)(AdvButton*),
+		void (*OnKeyUp)(AdvButton*),
+		buttonMode mode/* = btn_Digital*/)
 {
-	init(pin,OnKeyPress,OnKeyDown,OnKeyUp,mode);
+	init(pin,OnRepeatKeyPress,OnKeyDown,OnKeyUp,NULL,NULL,mode);
 }
+
+
+AdvButton::AdvButton(uint8_t pin,
+			void (*OnKeyClick)(AdvButton*),
+			buttonMode mode/* = btn_Digital*/)
+{
+	init(pin,NULL,NULL,NULL,OnKeyClick,NULL,mode);
+}
+
+AdvButton::AdvButton(uint8_t pin,
+		void (*OnKeyClick)(AdvButton*),
+		void (*OnKeyLongPress)(AdvButton*),
+		buttonMode mode/* = btn_Digital*/)
+{
+	init(pin,NULL,NULL,NULL,OnKeyClick,OnKeyLongPress,mode);
+}
+
 
 void AdvButton::check()
 {
@@ -90,12 +120,13 @@ void AdvButton::check()
 			startPress = millis();
 			if (func_keyDown != NULL)
 				func_keyDown(this);
-		    if (func_keyPress != NULL)
-		        func_keyPress(this);
+		    if (func_keyRepeatPress != NULL)
+		        func_keyRepeatPress(this);
 		}
 		
+
 		/* is repeating enabled? */
-		if ((repeat > 0 ) && (func_keyPress != NULL))
+		if ((repeat > 0 ) && (func_keyRepeatPress != NULL))
 		{
 			/* is the startdelay passed? */
 			if (millis() >= startPress+startDelay)
@@ -104,13 +135,16 @@ void AdvButton::check()
 				if ((millis() - prevPres) > repeat)
 				{
 					prevPres = millis(); 	
-					func_keyPress(this);		
+					func_keyRepeatPress(this);
 				}
 				
 			}
 			else
 				prevPres = millis();
 		}
+		/* is long press enabled? */
+		if (func_keyLongPress !=NULL && millis() >= startPress+longPressDelay)
+			func_keyLongPress(this);
 	}
 	else
 	{
@@ -118,10 +152,12 @@ void AdvButton::check()
 		/* the button is released, but was it previously pressed */		
 		if (startPress != 0)
 		{
-			/* reset start time, notify others */
-			
+			if (func_keyClick !=NULL && millis() <= startPress+clickDelay)
+				func_keyClick(this);
+
 			if (func_keyUp != NULL)
 				func_keyUp(this);	
+			/* reset start time */
 			startPress = 0;
 		}
 	}
@@ -133,9 +169,9 @@ unsigned long AdvButton::getPressTime()
 	return millis() - startPress;
 }
 
-void AdvButton::setOnKeyPress(void (*f)(AdvButton*))
+void AdvButton::setOnKeyRepeatPress(void (*f)(AdvButton*))
 {
-	func_keyPress =  (*f);
+	func_keyRepeatPress =  (*f);
 }
 
 void AdvButton::setOnKeyDown(void (*f)(AdvButton*))
@@ -147,6 +183,17 @@ void AdvButton::setOnKeyUp(void (*f)(AdvButton*))
 {
 	func_keyUp =  (*f);
 }
+
+void AdvButton::setOnKeyClick(void (*f)(AdvButton*))
+{
+	func_keyClick =  (*f);
+}
+
+void AdvButton::setOnKeyLongpress(void (*f)(AdvButton*))
+{
+	func_keyLongPress =  (*f);
+}
+
 
 void AdvButton::setRepeat(unsigned long repeat)
 {
